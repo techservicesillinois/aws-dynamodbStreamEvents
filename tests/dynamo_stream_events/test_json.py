@@ -3,6 +3,7 @@ from datetime import datetime, date, time
 from decimal import Decimal
 import json as _json
 
+from boto3.dynamodb.types import Binary
 import pytest
 import pytz
 
@@ -47,6 +48,10 @@ def test_dumps_bytearray():
 def test_dumps_array():
     res = json.dumps(array('i', [1, 2, 3]))
     assert res == '"AQAAAAIAAAADAAAA"'
+
+def test_dumps_binary():
+    res = json.dumps(Binary(b'\x01\x02\x03'))
+    assert res == '"AQID"'
 
 def test_dumps_date():
     res = json.dumps(date(2020, 7, 15))

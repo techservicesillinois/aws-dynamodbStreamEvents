@@ -8,6 +8,8 @@ import decimal
 from functools import partial
 import json as _json
 
+from boto3.dynamodb.types import Binary #pylint: disable=import-error
+
 JSONDecoder = _json.JSONDecoder
 JSONDecodeError = _json.JSONDecodeError
 
@@ -24,6 +26,9 @@ class JSONEncoder(_json.JSONEncoder):
         """ Return a serializable object for custom types. """
         if isinstance(o, (bytes, bytearray, array.array)):
             return b64encode(o).decode('ascii')
+
+        if isinstance(o, Binary):
+            return b64encode(bytes(o)).decode('ascii')
 
         if isinstance(o, (datetime.datetime, datetime.date, datetime.time)):
             return o.isoformat()
