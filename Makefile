@@ -28,4 +28,4 @@ test: build
 	.venv/bin/pytest -v tests/dynamo_stream_events
 
 dist: build
-	cd build && zip -r ../dist/associateEIP.zip *
+	cd build && zip -r ../dist/dynamoStreamEvents.zip *
