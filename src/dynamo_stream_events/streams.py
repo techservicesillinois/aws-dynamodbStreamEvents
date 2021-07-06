@@ -5,7 +5,7 @@ from collections.abc import Mapping
 from datetime import datetime, timezone
 import re
 
-from boto3.dynamodb.types import TypeDeserializer
+from boto3.dynamodb.types import TypeDeserializer #pylint: disable=import-error
 
 TABLE_ARN_REGEX = re.compile(r'''^
     (?P<tableARN>
