@@ -5,46 +5,10 @@ import pytest
 
 from dynamo_stream_events import streams
 
-"""
-    "Records": [
-        {
-            "eventID": "7de3041dd709b024af6f29e4fa13d34c",
-            "eventName": "INSERT",
-            "eventVersion": "1.1",
-            "eventSource": "aws:dynamodb",
-            "awsRegion": "region",
-            "dynamodb": {
-                "ApproximateCreationDateTime": 1479499740,
-                "Keys": {
-                    "Timestamp": {
-                        "S": "2016-11-18:12:09:36"
-                    },
-                    "Username": {
-                        "S": "John Doe"
-                    }
-                },
-                "NewImage": {
-                    "Timestamp": {
-                        "S": "2016-11-18:12:09:36"
-                    },
-                    "Message": {
-                        "S": "This is a bark from the Woofer social network"
-                    },
-                    "Username": {
-                        "S": "John Doe"
-                    }
-                },
-                "SequenceNumber": "13021600000000001596893679",
-                "SizeBytes": 112,
-                "StreamViewType": "NEW_IMAGE"
-            },
-            "eventSourceARN": "arn:aws:dynamodb:region:123456789012:table/BarkTable/stream/2016-11-16T20:42:48.104"
-        }
-
-"""
 FIXTURES = [
     # Empty event, with the single required field
     dict(
+        eventName="INSERT",
         dynamodb={}
     ),
     # Basic field transforms
@@ -85,7 +49,7 @@ FIXTURES = [
     # Old Image
     dict(
         eventID="7de3041dd709b024af6f29e4fa13d34c",
-        eventName="DELETE",
+        eventName="REMOVE",
         eventVersion="1.1",
         eventSource="aws:dynamodb",
         awsRegion="region",
@@ -110,7 +74,7 @@ FIXTURES = [
     # Both
     dict(
         eventID="7de3041dd709b024af6f29e4fa13d34c",
-        eventName="UPDATE",
+        eventName="MODIFY",
         eventVersion="1.1",
         eventSource="aws:dynamodb",
         awsRegion="region",
@@ -141,7 +105,7 @@ FIXTURES = [
     # Both - Add and change field
     dict(
         eventID="7de3041dd709b024af6f29e4fa13d34c",
-        eventName="UPDATE",
+        eventName="MODIFY",
         eventVersion="1.1",
         eventSource="aws:dynamodb",
         awsRegion="region",
@@ -173,7 +137,7 @@ FIXTURES = [
     # Both - Remove and change field
     dict(
         eventID="7de3041dd709b024af6f29e4fa13d34c",
-        eventName="UPDATE",
+        eventName="MODIFY",
         eventVersion="1.1",
         eventSource="aws:dynamodb",
         awsRegion="region",
@@ -205,6 +169,7 @@ FIXTURES = [
 ]
 EXPECTED = [
     dict(
+        eventName="INSERT",
         dynamodb=dict(
             ChangedFields=frozenset()
         )
@@ -249,7 +214,7 @@ EXPECTED = [
     ),
     dict(
         eventID="7de3041dd709b024af6f29e4fa13d34c",
-        eventName="DELETE",
+        eventName="REMOVE",
         eventVersion="1.1",
         eventSource="aws:dynamodb",
         awsRegion="region",
@@ -275,7 +240,7 @@ EXPECTED = [
     ),
     dict(
         eventID="7de3041dd709b024af6f29e4fa13d34c",
-        eventName="UPDATE",
+        eventName="MODIFY",
         eventVersion="1.1",
         eventSource="aws:dynamodb",
         awsRegion="region",
@@ -307,7 +272,7 @@ EXPECTED = [
     ),
     dict(
         eventID="7de3041dd709b024af6f29e4fa13d34c",
-        eventName="UPDATE",
+        eventName="MODIFY",
         eventVersion="1.1",
         eventSource="aws:dynamodb",
         awsRegion="region",
@@ -340,7 +305,7 @@ EXPECTED = [
     ),
     dict(
         eventID="7de3041dd709b024af6f29e4fa13d34c",
-        eventName="UPDATE",
+        eventName="MODIFY",
         eventVersion="1.1",
         eventSource="aws:dynamodb",
         awsRegion="region",
