@@ -78,6 +78,24 @@ def test_dumps_datetime():
     res = json.dumps(t)
     assert res == '"2020-07-15T15:01:02-05:00"'
 
-def test_dumps_decimal():
+def test_dumps_decimal_float():
     res = json.dumps(Decimal('1.7'))
     assert res == '1.7'
+
+def test_dumps_decimal_int():
+    res = json.dumps(Decimal('123'))
+    assert res == '123'
+
+def test_dumps_set():
+    res = json.dumps(set([1, 2, 3]))
+    assert res == '[1, 2, 3]'
+
+    res = json.dumps(set([3, 2, 1]))
+    assert res == '[1, 2, 3]'
+
+def test_dumps_frozenset():
+    res = json.dumps(frozenset([1, 2, 3]))
+    assert res == '[1, 2, 3]'
+
+    res = json.dumps(frozenset([3, 2, 1]))
+    assert res == '[1, 2, 3]'

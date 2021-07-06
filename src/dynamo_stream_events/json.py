@@ -24,6 +24,7 @@ class JSONEncoder(_json.JSONEncoder):
 
     def default(self, o):
         """ Return a serializable object for custom types. """
+        #pylint: disable=too-many-return-statements
         if isinstance(o, (bytes, bytearray, array.array)):
             return b64encode(o).decode('ascii')
 
@@ -34,7 +35,12 @@ class JSONEncoder(_json.JSONEncoder):
             return o.isoformat()
 
         if isinstance(o, decimal.Decimal):
+            if o % 1 == 0:
+                return int(o)
             return float(o)
+
+        if isinstance(o, (set, frozenset)):
+            return sorted(o)
 
         return super().default(o)
 
