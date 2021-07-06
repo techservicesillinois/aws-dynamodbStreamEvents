@@ -57,8 +57,8 @@ def generateRecords(records):
 
         new_image = record_dynamodb.get('NewImage')
         old_image = record_dynamodb.get('OldImage')
-        if (new_image is None or isinstance(new_image, (dict, Mapping))) \
-                and (old_image is None or isinstance(old_image, (dict, Mapping))):
+        if (new_image is None or isinstance(new_image, Mapping)) \
+                and (old_image is None or isinstance(old_image, Mapping)):
             new_image_keys = set(new_image.keys()) if new_image else set()
             old_image_keys = set(old_image.keys()) if old_image else set()
 
