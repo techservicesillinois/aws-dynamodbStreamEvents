@@ -9,6 +9,10 @@ import boto3
 from . import json
 from .streams import generateRecords #pylint: disable=import-error
 
+EVENT_DETAIL_FMT = os.environ.get(
+    'EVENT_DETAIL_FMT',
+    'DynamoDB Streams Record {eventName}'
+)
 LOGGING_LEVEL = getattr(
     logging,
     os.environ['LOGGING_LEVEL'] if os.environ.get('LOGGING_LEVEL') else 'INFO',
@@ -38,7 +42,7 @@ def put_records(records, event_bus='default', _events_clnt=events_clnt):
         event = dict(
             Source='dynamodb-streams.aws.illinois.edu',
             Resources=[],
-            DetailType=f"DynamoDB Streams Record {record['eventName']}",
+            DetailType=EVENT_DETAIL_FMT.format(**record),
             Detail=json.dumps(record['dynamodb']),
             EventBusName=event_bus,
         )

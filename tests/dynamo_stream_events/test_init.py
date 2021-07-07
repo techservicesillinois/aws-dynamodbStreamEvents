@@ -6,7 +6,7 @@ from freezegun import freeze_time
 from moto import mock_events, mock_logs
 from moto.core import ACCOUNT_ID
 
-from dynamo_stream_events import put_records
+import dynamo_stream_events as init
 
 @contextmanager
 def setup_events():
@@ -379,7 +379,7 @@ EXPECTED = [
 @freeze_time('2020-07-15T00:00:00Z')
 def test_put_records():
     with setup_events() as (events_clnt, logs_clnt):
-        put_records(FIXTURES, _events_clnt=events_clnt)
+        init.put_records(FIXTURES, _events_clnt=events_clnt)
 
         events = get_events(logs_clnt)
         assert len(events) == len(EXPECTED)
@@ -391,3 +391,44 @@ def test_put_records():
             del event["account"]
             assert event == EXPECTED[event_idx]
 
+@freeze_time('2020-07-15T00:00:00Z')
+def test_event_detail_fmt():
+    event_detail_fmt_orig = init.EVENT_DETAIL_FMT
+    try:
+        init.EVENT_DETAIL_FMT = 'Hello, World! {eventID} - {eventName}'
+        with setup_events() as (events_clnt, logs_clnt):
+            init.put_records(
+                [dict(
+                    eventID="7de3041dd709b024af6f29e4fa13d34c",
+                    eventName="INSERT",
+                    eventVersion="1.1",
+                    eventSource="aws:dynamodb",
+                    awsRegion="region",
+                    dynamodb={},
+                    eventSourceARN="arn:aws:dynamodb:region:123456789012:table/BarkTable/stream/2016-11-16T20:42:48.104",
+                )],
+                _events_clnt=events_clnt
+            )
+
+            events = get_events(logs_clnt)
+            assert len(events) == 1
+
+            event = events[0]
+            del event["version"]
+            del event["id"]
+            del event["region"]
+            del event["account"]
+            assert event == {
+                "detail-type": "Hello, World! 7de3041dd709b024af6f29e4fa13d34c - INSERT",
+                "source": "dynamodb-streams.aws.illinois.edu",
+                "time": "2020-07-15T00:00:00Z",
+                "resources": [
+                    "arn:aws:dynamodb:region:123456789012:table/BarkTable"
+                ],
+                "detail": {
+                    "ChangedFields": [],
+                }
+            }
+
+    finally:
+        init.EVENT_DETAIL_FMT = event_detail_fmt_orig
