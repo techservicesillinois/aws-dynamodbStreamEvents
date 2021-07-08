@@ -220,6 +220,7 @@ EXPECTED = [
         "time": "2020-07-15T00:00:00Z",
         "resources": [],
         "detail": {
+            "ApproximateCreationDateTime": 1594771200.0,
             "ChangedFields": [],
         }
     },
@@ -231,6 +232,7 @@ EXPECTED = [
             "arn:aws:dynamodb:region:123456789012:table/BarkTable"
         ],
         "detail": {
+            "ApproximateCreationDateTime": 1594771200.0,
             "ChangedFields": [],
         }
     },
@@ -242,7 +244,7 @@ EXPECTED = [
             "arn:aws:dynamodb:region:123456789012:table/BarkTable"
         ],
         "detail": {
-            "ApproximateCreationDateTime": "2016-11-18T20:09:00+00:00",
+            "ApproximateCreationDateTime": 1479499740.0,
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -267,7 +269,7 @@ EXPECTED = [
             "arn:aws:dynamodb:region:123456789012:table/BarkTable"
         ],
         "detail": {
-            "ApproximateCreationDateTime": "2016-11-18T20:09:00+00:00",
+            "ApproximateCreationDateTime": 1479499740.0,
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -292,7 +294,7 @@ EXPECTED = [
             "arn:aws:dynamodb:region:123456789012:table/BarkTable"
         ],
         "detail": {
-            "ApproximateCreationDateTime": "2016-11-18T20:09:00+00:00",
+            "ApproximateCreationDateTime": 1479499740.0,
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -323,7 +325,7 @@ EXPECTED = [
             "arn:aws:dynamodb:region:123456789012:table/BarkTable"
         ],
         "detail": {
-            "ApproximateCreationDateTime": "2016-11-18T20:09:00+00:00",
+            "ApproximateCreationDateTime": 1479499740.0,
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -355,7 +357,7 @@ EXPECTED = [
             "arn:aws:dynamodb:region:123456789012:table/BarkTable"
         ],
         "detail": {
-            "ApproximateCreationDateTime": "2016-11-18T20:09:00+00:00",
+            "ApproximateCreationDateTime": 1479499740.0,
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -446,6 +448,7 @@ def test_event_detailtype_fmt():
                     "arn:aws:dynamodb:region:123456789012:table/BarkTable"
                 ],
                 "detail": {
+                    "ApproximateCreationDateTime": 1594771200.0,
                     "ChangedFields": [],
                 }
             }

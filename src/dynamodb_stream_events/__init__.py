@@ -1,6 +1,7 @@
 """
 Take DynamoDB Streams event records and republish them as EventBridge events.
 """
+from datetime import datetime, timezone
 import logging
 import os
 
@@ -37,15 +38,21 @@ def put_records(records, event_bus_name=EVENT_BUS_NAME, _events_clnt=events_clnt
             'idx': record_idx,
             'record': record,
         })
+
+        if 'ApproximateCreationDateTime' in record['dynamodb']:
+            ts = record['dynamodb']['ApproximateCreationDateTime']
+        else:
+            ts = datetime.now(timezone.utc)
+        record['dynamodb']['ApproximateCreationDateTime'] = ts.timestamp()
+
         event = dict(
+            Time=ts,
             Source='dynamodb-streams.aws.illinois.edu',
             Resources=[],
             DetailType=EVENT_DETAILTYPE_FMT.format(**record),
             Detail=json.dumps(record['dynamodb']),
             EventBusName=event_bus_name,
         )
-        if 'ApproximateCreationDateTime' in record['dynamodb']:
-            event['Time'] = record['dynamodb']['ApproximateCreationDateTime']
         if 'tableARN' in record:
             event['Resources'].append(record['tableARN'])
 
