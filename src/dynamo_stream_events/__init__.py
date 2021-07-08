@@ -10,7 +10,7 @@ from . import json
 from .streams import generateRecords #pylint: disable=import-error
 
 EVENT_BUS_NAME = os.environ['EVENT_BUS_NAME'] if os.environ.get('EVENT_BUS_NAME') else 'default'
-EVENT_DETAIL_FMT = os.environ['EVENT_DETAIL_FMT'] if os.environ.get('EVENT_DETAIL_FMT') else 'DynamoDB Streams Record {eventName}'
+EVENT_DETAILTYPE_FMT = os.environ['EVENT_DETAILTYPE_FMT'] if os.environ.get('EVENT_DETAILTYPE_FMT') else 'DynamoDB Streams Record {eventName}'
 LOGGING_LEVEL = getattr(
     logging,
     os.environ['LOGGING_LEVEL'] if os.environ.get('LOGGING_LEVEL') else 'INFO',
@@ -40,7 +40,7 @@ def put_records(records, event_bus_name=EVENT_BUS_NAME, _events_clnt=events_clnt
         event = dict(
             Source='dynamodb-streams.aws.illinois.edu',
             Resources=[],
-            DetailType=EVENT_DETAIL_FMT.format(**record),
+            DetailType=EVENT_DETAILTYPE_FMT.format(**record),
             Detail=json.dumps(record['dynamodb']),
             EventBusName=event_bus_name,
         )
@@ -51,7 +51,7 @@ def put_records(records, event_bus_name=EVENT_BUS_NAME, _events_clnt=events_clnt
 
         logger.debug('[Record #%(idx)d] Event = %(event)r', {
             'idx': record_idx,
-            'record': event,
+            'event': event,
         })
         return event
 

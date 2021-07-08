@@ -412,10 +412,10 @@ def test_put_records_foo():
             assert event == EXPECTED[event_idx]
 
 @freeze_time('2020-07-15T00:00:00Z')
-def test_event_detail_fmt():
-    event_detail_fmt_orig = init.EVENT_DETAIL_FMT
+def test_event_detailtype_fmt():
+    event_detailtype_fmt_orig = init.EVENT_DETAILTYPE_FMT
     try:
-        init.EVENT_DETAIL_FMT = 'Hello, World! {eventID} - {eventName}'
+        init.EVENT_DETAILTYPE_FMT = 'Hello, World! {eventID} - {eventName}'
         with setup_events() as (events_clnt, logs_clnt):
             init.put_records(
                 [dict(
@@ -451,4 +451,4 @@ def test_event_detail_fmt():
             }
 
     finally:
-        init.EVENT_DETAIL_FMT = event_detail_fmt_orig
+        init.EVENT_DETAILTYPE_FMT = event_detailtype_fmt_orig

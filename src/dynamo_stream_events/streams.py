@@ -60,7 +60,7 @@ def generateRecords(records):
                 record['tableARN'] = m.group('tableARN')
                 logger.debug('[Record #%(idx)d] parsed tableARN = %(arn)s', {
                     'idx': record_idx,
-                    'tableARN': record['tableARN'],
+                    'arn': record['tableARN'],
                 })
             else:
                 logger.warning('[Record #%(idx)d] Unable to parse eventSourceARN: %(arn)s', {
