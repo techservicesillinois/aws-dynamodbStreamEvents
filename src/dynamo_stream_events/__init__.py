@@ -10,10 +10,7 @@ from . import json
 from .streams import generateRecords #pylint: disable=import-error
 
 EVENT_BUS_NAME = os.environ['EVENT_BUS_NAME'] if os.environ.get('EVENT_BUS_NAME') else 'default'
-EVENT_DETAIL_FMT = os.environ.get(
-    'EVENT_DETAIL_FMT',
-    'DynamoDB Streams Record {eventName}'
-)
+EVENT_DETAIL_FMT = os.environ['EVENT_DETAIL_FMT'] if os.environ.get('EVENT_DETAIL_FMT') else 'DynamoDB Streams Record {eventName}'
 LOGGING_LEVEL = getattr(
     logging,
     os.environ['LOGGING_LEVEL'] if os.environ.get('LOGGING_LEVEL') else 'INFO',
