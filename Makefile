@@ -25,7 +25,7 @@ lint: build
 
 test: build
 	.venv/bin/pip install -r $(TEST_REQUIREMENTS)
-	.venv/bin/pytest -v tests/dynamo_stream_events
+	.venv/bin/pytest -v tests/dynamodb_stream_events
 
 dist: build
-	cd build && zip -r ../dist/dynamoStreamEvents.zip *
+	cd build && zip -r ../dist/dynamodbStreamEvents.zip *

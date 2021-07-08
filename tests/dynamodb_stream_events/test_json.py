@@ -7,7 +7,7 @@ from boto3.dynamodb.types import Binary
 import pytest
 import pytz
 
-from dynamo_stream_events import json
+from dynamodb_stream_events import json
 
 LOCAL_TZ = pytz.timezone('America/Chicago')
 
