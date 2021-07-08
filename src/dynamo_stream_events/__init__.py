@@ -9,6 +9,7 @@ import boto3
 from . import json
 from .streams import generateRecords #pylint: disable=import-error
 
+EVENT_BUS_NAME = os.environ['EVENT_BUS_NAME'] if os.environ.get('EVENT_BUS_NAME') else 'default'
 EVENT_DETAIL_FMT = os.environ.get(
     'EVENT_DETAIL_FMT',
     'DynamoDB Streams Record {eventName}'
@@ -29,7 +30,7 @@ def handler(event, context):
     logger.setLevel(LOGGING_LEVEL)
     put_records(event.get('Records', []))
 
-def put_records(records, event_bus='default', _events_clnt=events_clnt):
+def put_records(records, event_bus_name=EVENT_BUS_NAME, _events_clnt=events_clnt):
     """
     Takes a list of event records from DynamoDB Streams, adjusts the types, and
     put them to EventBridge.
@@ -44,7 +45,7 @@ def put_records(records, event_bus='default', _events_clnt=events_clnt):
             Resources=[],
             DetailType=EVENT_DETAIL_FMT.format(**record),
             Detail=json.dumps(record['dynamodb']),
-            EventBusName=event_bus,
+            EventBusName=event_bus_name,
         )
         if 'ApproximateCreationDateTime' in record['dynamodb']:
             event['Time'] = record['dynamodb']['ApproximateCreationDateTime']

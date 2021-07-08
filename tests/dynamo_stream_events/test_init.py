@@ -9,7 +9,7 @@ from moto.core import ACCOUNT_ID
 import dynamo_stream_events as init
 
 @contextmanager
-def setup_events():
+def setup_events(event_bus_name='default'):
     with mock_events(), mock_logs():
         events_clnt = boto3.client('events')
         logs_clnt = boto3.client('logs')
@@ -18,13 +18,18 @@ def setup_events():
             logGroupName='/events',
         )
 
+        if event_bus_name != 'default':
+            events_clnt.create_event_bus(Name=event_bus_name)
+
         events_clnt.put_rule(
             Name='log-events',
             EventPattern=f'{{"account":[{ACCOUNT_ID}]}}',
             State='ENABLED',
+            EventBusName=event_bus_name,
         )
         events_clnt.put_targets(
             Rule='log-events',
+            EventBusName=event_bus_name,
             Targets=[
                 dict(Id="logs", Arn=f"arn:aws:logs:us-east-2:{ACCOUNT_ID}:log-group:/events"),
             ],
@@ -380,6 +385,21 @@ EXPECTED = [
 def test_put_records():
     with setup_events() as (events_clnt, logs_clnt):
         init.put_records(FIXTURES, _events_clnt=events_clnt)
+
+        events = get_events(logs_clnt)
+        assert len(events) == len(EXPECTED)
+
+        for event_idx, event in enumerate(events):
+            del event["version"]
+            del event["id"]
+            del event["region"]
+            del event["account"]
+            assert event == EXPECTED[event_idx]
+
+@freeze_time('2020-07-15T00:00:00Z')
+def test_put_records_foo():
+    with setup_events(event_bus_name='foo') as (events_clnt, logs_clnt):
+        init.put_records(FIXTURES, event_bus_name='foo', _events_clnt=events_clnt)
 
         events = get_events(logs_clnt)
         assert len(events) == len(EXPECTED)
