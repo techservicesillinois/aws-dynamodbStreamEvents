@@ -5,6 +5,7 @@ import boto3
 from freezegun import freeze_time
 from moto import mock_events, mock_logs
 from moto.core import ACCOUNT_ID
+import pytest
 
 import dynamodb_stream_events as init
 
@@ -390,34 +391,36 @@ EXPECTED = [
 ]
 
 @freeze_time('2020-07-15T00:00:00Z')
-def test_put_records():
+@pytest.mark.parametrize("record,expected", zip(FIXTURES, EXPECTED))
+def test_put_record(record, expected):
     with setup_events() as (events_clnt, logs_clnt):
-        init.put_records(FIXTURES, _events_clnt=events_clnt)
+        init.put_records([record], _events_clnt=events_clnt)
 
         events = get_events(logs_clnt)
-        assert len(events) == len(EXPECTED)
+        assert len(events) == 1
 
-        for event_idx, event in enumerate(events):
-            del event["version"]
-            del event["id"]
-            del event["region"]
-            del event["account"]
-            assert event == EXPECTED[event_idx]
+        event = events[0]
+        del event["version"]
+        del event["id"]
+        del event["region"]
+        del event["account"]
+        assert event == expected
 
 @freeze_time('2020-07-15T00:00:00Z')
-def test_put_records_foo():
+@pytest.mark.parametrize("record,expected", zip(FIXTURES, EXPECTED))
+def test_put_records_foo(record, expected):
     with setup_events(event_bus_name='foo') as (events_clnt, logs_clnt):
-        init.put_records(FIXTURES, event_bus_name='foo', _events_clnt=events_clnt)
+        init.put_records([record], event_bus_name='foo', _events_clnt=events_clnt)
 
         events = get_events(logs_clnt)
-        assert len(events) == len(EXPECTED)
+        assert len(events) == 1
 
-        for event_idx, event in enumerate(events):
-            del event["version"]
-            del event["id"]
-            del event["region"]
-            del event["account"]
-            assert event == EXPECTED[event_idx]
+        event = events[0]
+        del event["version"]
+        del event["id"]
+        del event["region"]
+        del event["account"]
+        assert event == expected
 
 @freeze_time('2020-07-15T00:00:00Z')
 def test_event_detailtype_fmt():
