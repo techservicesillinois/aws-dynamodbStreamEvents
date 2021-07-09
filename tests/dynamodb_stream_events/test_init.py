@@ -233,6 +233,7 @@ EXPECTED = [
         ],
         "detail": {
             "ApproximateCreationDateTime": 1594771200.0,
+            "TableName": "BarkTable",
             "ChangedFields": [],
         }
     },
@@ -245,6 +246,7 @@ EXPECTED = [
         ],
         "detail": {
             "ApproximateCreationDateTime": 1479499740.0,
+            "TableName": "BarkTable",
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -270,6 +272,7 @@ EXPECTED = [
         ],
         "detail": {
             "ApproximateCreationDateTime": 1479499740.0,
+            "TableName": "BarkTable",
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -295,6 +298,7 @@ EXPECTED = [
         ],
         "detail": {
             "ApproximateCreationDateTime": 1479499740.0,
+            "TableName": "BarkTable",
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -326,6 +330,7 @@ EXPECTED = [
         ],
         "detail": {
             "ApproximateCreationDateTime": 1479499740.0,
+            "TableName": "BarkTable",
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -358,6 +363,7 @@ EXPECTED = [
         ],
         "detail": {
             "ApproximateCreationDateTime": 1479499740.0,
+            "TableName": "BarkTable",
             "Keys": {
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -449,6 +455,7 @@ def test_event_detailtype_fmt():
                 ],
                 "detail": {
                     "ApproximateCreationDateTime": 1594771200.0,
+                    "TableName": "BarkTable",
                     "ChangedFields": [],
                 }
             }

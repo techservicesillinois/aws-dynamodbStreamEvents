@@ -181,7 +181,8 @@ EXPECTED = [
         eventSource="aws:dynamodb",
         awsRegion="region",
         dynamodb=dict(
-            ChangedFields=frozenset()
+            ChangedFields=frozenset(),
+            TableName="BarkTable",
         ),
         eventSourceARN="arn:aws:dynamodb:region:123456789012:table/BarkTable/stream/2016-11-16T20:42:48.104",
         tableARN="arn:aws:dynamodb:region:123456789012:table/BarkTable"
@@ -194,6 +195,7 @@ EXPECTED = [
         awsRegion="region",
         dynamodb=dict(
             ApproximateCreationDateTime=datetime.fromtimestamp(1479499740, timezone.utc),
+            TableName="BarkTable",
             Keys={
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -220,6 +222,7 @@ EXPECTED = [
         awsRegion="region",
         dynamodb=dict(
             ApproximateCreationDateTime=datetime.fromtimestamp(1479499740, timezone.utc),
+            TableName="BarkTable",
             Keys={
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -246,6 +249,7 @@ EXPECTED = [
         awsRegion="region",
         dynamodb=dict(
             ApproximateCreationDateTime=datetime.fromtimestamp(1479499740, timezone.utc),
+            TableName="BarkTable",
             Keys={
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -278,6 +282,7 @@ EXPECTED = [
         awsRegion="region",
         dynamodb=dict(
             ApproximateCreationDateTime=datetime.fromtimestamp(1479499740, timezone.utc),
+            TableName="BarkTable",
             Keys={
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"
@@ -311,6 +316,7 @@ EXPECTED = [
         awsRegion="region",
         dynamodb=dict(
             ApproximateCreationDateTime=datetime.fromtimestamp(1479499740, timezone.utc),
+            TableName="BarkTable",
             Keys={
                 "Timestamp": "2016-11-18:12:09:36",
                 "Username": "John Doe"

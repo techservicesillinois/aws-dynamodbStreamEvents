@@ -58,9 +58,11 @@ def generateRecords(records):
         if 'eventSourceARN' in record:
             if m := TABLE_ARN_REGEX.match(record['eventSourceARN']):
                 record['tableARN'] = m.group('tableARN')
-                logger.debug('[Record #%(idx)d] parsed tableARN = %(arn)s', {
+                record_dynamodb['TableName'] = m.group('table')
+                logger.debug('[Record #%(idx)d] parsed tableARN = %(arn)s; dynamodb.TableName = %(table)s', {
                     'idx': record_idx,
                     'arn': record['tableARN'],
+                    'table': record_dynamodb['TableName'],
                 })
             else:
                 logger.warning('[Record #%(idx)d] Unable to parse eventSourceARN: %(arn)s', {
