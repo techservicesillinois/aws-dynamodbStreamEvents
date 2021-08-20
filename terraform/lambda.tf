@@ -16,7 +16,34 @@ data "aws_iam_policy_document" "this" {
             "dynamodb:GetRecords",
             "dynamodb:GetShardIterator",
         ]
-        resources = [ var.dynamodb_stream_arn ]
+        resources = [ local.dynamodb_stream_arn ]
+    }
+
+    dynamic "statement" {
+        for_each = [ for c in data.aws_dynamodb_table.this.server_side_encryption : c.kms_key_arn if c.kms_key_arn != null ]
+        content {
+            effect  = "Allow"
+            actions = [
+                "kms:GenerateDataKey",
+                "kms:Decrypt",
+                "kms:Encrypt",
+            ]
+            resources = [ statement.value ]
+
+            condition {
+                test     = "StringEquals"
+                variable = "kms:EncryptionContext:aws:dynamodb:tableName"
+
+                values = [ var.dynamodb_table ]
+            }
+
+            condition {
+                test     = "StringEquals"
+                variable = "kms:EncryptionContext:aws:dynamodb:subscriberId"
+
+                values = [ local.account_id ]
+            }
+        }
     }
 
     statement {
@@ -62,7 +89,7 @@ module "this" {
 
     event_source_mapping = {
         dynamodb = {
-            event_source_arn  = var.dynamodb_stream_arn
+            event_source_arn  = local.dynamodb_stream_arn
             starting_position = "LATEST"
         }
     }
@@ -75,7 +102,7 @@ module "this" {
     allowed_triggers = {
         dynamodb = {
             principal  = "dynamodb.amazonaws.com"
-            source_arn = var.dynamodb_stream_arn
+            source_arn = local.dynamodb_stream_arn
         }
     }
 

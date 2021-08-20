@@ -42,9 +42,9 @@ variable "deploy_s3zip" {
     default     = null
 }
 
-variable "dynamodb_stream_arn" {
+variable "dynamodb_table" {
     type        = string
-    description = "DynamoDB Streams ARN to setup a trigger for."
+    description = "Name of the DynamoDB table to monitor. Streams must be enabled."
 }
 
 variable "event_detailtype_fmt" {

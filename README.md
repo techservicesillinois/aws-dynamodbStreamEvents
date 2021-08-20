@@ -74,10 +74,11 @@ Type of environment this is serving:
 Project name within the service. This is used as part of resource names, so
 must be a simple alpha-numeric string.
 
-#### dynamodb_stream_arn
+#### dynamodb_table
 
-The ARN of the DynamoDB Streams to setup as a trigger. The Lambda will be given
-permissions to read from this stream.
+The name of the DynamoDB Table to trigger from. This requires the table have
+streams enabled. If the table is encrypted with a CMK then is also generates
+an IAM policy that can decrypt table items.
 
 #### event_detailtype_fmt
 
