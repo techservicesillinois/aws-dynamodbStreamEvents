@@ -27,6 +27,21 @@ variable "project" {
 # Lambda
 # =========================================================
 
+variable "deploy_localzip" {
+    type        = string
+    description = "Path to the zip file to deploy."
+    default     = null
+}
+
+variable "deploy_s3zip" {
+    type        = object({
+                    bucket = string
+                    key    = string
+                })
+    description = "S3 bucket and key to the zip file to deploy."
+    default     = null
+}
+
 variable "dynamodb_stream_arn" {
     type        = string
     description = "DynamoDB Streams ARN to setup a trigger for."
