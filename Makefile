@@ -34,6 +34,7 @@ lint: build
 	.venv/bin/pylint $(SOURCES)
 
 test: build
+	.venv/bin/pip install -r $(REQUIREMENTS)
 	.venv/bin/pip install -r $(TEST_REQUIREMENTS)
 	.venv/bin/pytest -v tests/
 
