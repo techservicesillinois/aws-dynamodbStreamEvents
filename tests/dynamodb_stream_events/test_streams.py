@@ -171,7 +171,8 @@ EXPECTED = [
     dict(
         eventName="INSERT",
         dynamodb=dict(
-            ChangedFields=frozenset()
+            ChangedFields=frozenset(),
+            HasChanged={},
         )
     ),
     dict(
@@ -182,6 +183,7 @@ EXPECTED = [
         awsRegion="region",
         dynamodb=dict(
             ChangedFields=frozenset(),
+            HasChanged={},
             TableName="BarkTable",
         ),
         eventSourceARN="arn:aws:dynamodb:region:123456789012:table/BarkTable/stream/2016-11-16T20:42:48.104",
@@ -207,6 +209,7 @@ EXPECTED = [
                 "Foo": Decimal(123)
             },
             ChangedFields=frozenset(['Timestamp', 'Message', 'Username', 'Foo']),
+            HasChanged=dict(Timestamp=True, Message=True, Username=True, Foo=True),
             SequenceNumber="13021600000000001596893679",
             SizeBytes=112,
             StreamViewType="NEW_IMAGE"
@@ -234,6 +237,7 @@ EXPECTED = [
                 "Foo": Decimal(123)
             },
             ChangedFields=frozenset(['Timestamp', 'Message', 'Username', 'Foo']),
+            HasChanged=dict(Timestamp=True, Message=True, Username=True, Foo=True),
             SequenceNumber="13021600000000001596893679",
             SizeBytes=112,
             StreamViewType="OLD_IMAGE"
@@ -267,6 +271,7 @@ EXPECTED = [
                 "Foo": Decimal(456)
             },
             ChangedFields=frozenset(['Message', 'Foo']),
+            HasChanged=dict(Timestamp=False, Username=False, Message=True, Foo=True),
             SequenceNumber="13021600000000001596893679",
             SizeBytes=112,
             StreamViewType="NEW_AND_OLD_IMAGES"
@@ -301,6 +306,7 @@ EXPECTED = [
                 "Bar": {1, 2, 3},
             },
             ChangedFields=frozenset(['Foo', 'Bar']),
+            HasChanged=dict(Timestamp=False, Username=False, Message=False, Foo=True, Bar=True),
             SequenceNumber="13021600000000001596893679",
             SizeBytes=112,
             StreamViewType="NEW_AND_OLD_IMAGES"
@@ -335,6 +341,7 @@ EXPECTED = [
                 "Foo": Decimal(456),
             },
             ChangedFields=frozenset(['Foo', 'Bar']),
+            HasChanged=dict(Timestamp=False, Username=False, Message=False, Foo=True, Bar=True),
             SequenceNumber="13021600000000001596893679",
             SizeBytes=112,
             StreamViewType="NEW_AND_OLD_IMAGES"

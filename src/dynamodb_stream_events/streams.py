@@ -78,6 +78,8 @@ def generateRecords(records):
             old_image_keys = set(old_image.keys()) if old_image else set()
 
             changed_fields = set()
+            has_changed = {}
+
             add_fields = new_image_keys - old_image_keys
             if add_fields:
                 logger.debug('[Record #%(idx)d] Added fields: %(names)s', {
@@ -85,6 +87,8 @@ def generateRecords(records):
                     'names': '; '.join(add_fields)
                 })
                 changed_fields.update(add_fields)
+                has_changed.update({k: True for k in add_fields})
+
             rem_fields = old_image_keys - new_image_keys
             if rem_fields:
                 logger.debug('[Record #%(idx)d] Added fields: %(names)s', {
@@ -92,6 +96,8 @@ def generateRecords(records):
                     'names': '; '.join(rem_fields)
                 })
                 changed_fields.update(rem_fields)
+                has_changed.update({k: True for k in rem_fields})
+
             for k in new_image_keys & old_image_keys:
                 if new_image[k] != old_image[k]:
                     logger.debug('[Record #%(idx)d] Changed: %(name)s', {
@@ -99,7 +105,11 @@ def generateRecords(records):
                         'name': k,
                     })
                     changed_fields.add(k)
+                    has_changed[k] = True
+                else:
+                    has_changed[k] = False
 
             record_dynamodb['ChangedFields'] = frozenset(changed_fields)
+            record_dynamodb['HasChanged']    = has_changed
 
         yield record

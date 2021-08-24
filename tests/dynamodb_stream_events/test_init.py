@@ -223,6 +223,7 @@ EXPECTED = [
         "detail": {
             "ApproximateCreationDateTime": 1594771200.0,
             "ChangedFields": [],
+            "HasChanged": {},
         }
     },
     {
@@ -236,6 +237,7 @@ EXPECTED = [
             "ApproximateCreationDateTime": 1594771200.0,
             "TableName": "BarkTable",
             "ChangedFields": [],
+            "HasChanged": {},
         }
     },
     {
@@ -262,6 +264,12 @@ EXPECTED = [
             "SizeBytes": 112,
             "StreamViewType": "NEW_IMAGE",
             "ChangedFields": ["Foo", "Message", "Timestamp", "Username"],
+            "HasChanged": {
+                "Foo": True,
+                "Message": True,
+                "Timestamp": True,
+                "Username": True,
+            },
         }
     },
     {
@@ -288,6 +296,12 @@ EXPECTED = [
             "SizeBytes": 112,
             "StreamViewType": "OLD_IMAGE",
             "ChangedFields": ["Foo", "Message", "Timestamp", "Username"],
+            "HasChanged": {
+                "Foo": True,
+                "Message": True,
+                "Timestamp": True,
+                "Username": True,
+            },
         }
     },
     {
@@ -320,6 +334,12 @@ EXPECTED = [
             "SizeBytes": 112,
             "StreamViewType": "NEW_AND_OLD_IMAGES",
             "ChangedFields": ["Foo", "Message"],
+            "HasChanged": {
+                "Foo": True,
+                "Message": True,
+                "Timestamp": False,
+                "Username": False,
+            },
         }
     },
     {
@@ -353,6 +373,13 @@ EXPECTED = [
             "SizeBytes": 112,
             "StreamViewType": "NEW_AND_OLD_IMAGES",
             "ChangedFields": ["Bar", "Foo"],
+            "HasChanged": {
+                "Foo": True,
+                "Bar": True,
+                "Message": False,
+                "Timestamp": False,
+                "Username": False,
+            },
         }
     },
     {
@@ -386,6 +413,13 @@ EXPECTED = [
             "SizeBytes": 112,
             "StreamViewType": "NEW_AND_OLD_IMAGES",
             "ChangedFields": ["Bar", "Foo"],
+            "HasChanged": {
+                "Foo": True,
+                "Bar": True,
+                "Message": False,
+                "Timestamp": False,
+                "Username": False,
+            },
         }
     },
 ]
@@ -460,6 +494,7 @@ def test_event_detailtype_fmt():
                     "ApproximateCreationDateTime": 1594771200.0,
                     "TableName": "BarkTable",
                     "ChangedFields": [],
+                    "HasChanged": {},
                 }
             }
 
