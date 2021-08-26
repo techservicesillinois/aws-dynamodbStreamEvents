@@ -36,9 +36,9 @@ variable "deploy_localzip" {
 variable "deploy_s3zip" {
     type        = object({
                     bucket = string
-                    key    = string
+                    prefix = string
                 })
-    description = "S3 bucket and key to the zip file to deploy."
+    description = "S3 bucket and prefix to the dynamodbStreamEvents/environment.zip file to deploy."
     default     = null
 }
 

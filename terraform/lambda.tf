@@ -2,6 +2,13 @@
 # Data
 # =========================================================
 
+data "aws_s3_bucket_object" "this" {
+    count = var.deploy_s3zip == null ?  0 : 1
+
+    bucket = var.deploy_s3zip.bucket
+    key    = "${var.deploy_s3zip.prefix}dynamodbStreamEvents/${var.environment}.zip"
+}
+
 data "aws_iam_policy_document" "this" {
     statement {
         effect    = "Allow"
@@ -85,7 +92,11 @@ module "this" {
 
     create_package         = false
     local_existing_package = var.deploy_s3zip == null ? coalesce(var.deploy_localzip, "${path.module}/../dist/dynamodbStreamEvents.zip") : null
-    s3_existing_package    = var.deploy_s3zip
+    s3_existing_package    = var.deploy_s3zip == null ? null : {
+        bucket     = join("", data.aws_s3_bucket_object.this[*].bucket)
+        key        = join("", data.aws_s3_bucket_object.this[*].key)
+        version_id = join("", data.aws_s3_bucket_object.this[*].version_id)
+    }
 
     event_source_mapping = {
         dynamodb = {
