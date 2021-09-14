@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import logging
 import re
 
-from boto3.dynamodb.types import TypeDeserializer #pylint: disable=import-error
+from boto3.dynamodb.types import TypeDeserializer
 
 TABLE_ARN_REGEX = re.compile(r'''^
     (?P<tableARN>
@@ -29,7 +29,8 @@ $''', re.VERBOSE)
 logger = logging.getLogger(__name__)
 
 
-def generateRecords(records):
+def generate_records(records):
+    #pylint: disable=too-many-locals,too-many-branches
     """
     Generator that yields a python dict from a  list of stream event records.
 
@@ -56,19 +57,26 @@ def generateRecords(records):
                 record_dynamodb[k] = deser.deserialize(dict(M=record_dynamodb[k]))
 
         if 'eventSourceARN' in record:
-            if m := TABLE_ARN_REGEX.match(record['eventSourceARN']):
-                record['tableARN'] = m.group('tableARN')
-                record_dynamodb['TableName'] = m.group('table')
-                logger.debug('[Record #%(idx)d] parsed tableARN = %(arn)s; dynamodb.TableName = %(table)s', {
-                    'idx': record_idx,
-                    'arn': record['tableARN'],
-                    'table': record_dynamodb['TableName'],
-                })
+            if match := TABLE_ARN_REGEX.match(record['eventSourceARN']):
+                record['tableARN'] = match.group('tableARN')
+                record_dynamodb['TableName'] = match.group('table')
+                logger.debug(
+                    '[Record #%(idx)d] parsed tableARN = %(arn)s; ' \
+                    'dynamodb.TableName = %(table)s',
+                    {
+                        'idx': record_idx,
+                        'arn': record['tableARN'],
+                        'table': record_dynamodb['TableName'],
+                    }
+                )
             else:
-                logger.warning('[Record #%(idx)d] Unable to parse eventSourceARN: %(arn)s', {
-                    'idx': record_idx,
-                    'arn': record['eventSourceARN'],
-                })
+                logger.warning(
+                    '[Record #%(idx)d] Unable to parse eventSourceARN: %(arn)s',
+                    {
+                        'idx': record_idx,
+                        'arn': record['eventSourceARN'],
+                    }
+                )
 
         new_image = record_dynamodb.get('NewImage')
         old_image = record_dynamodb.get('OldImage')

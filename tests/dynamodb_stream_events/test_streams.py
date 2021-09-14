@@ -353,4 +353,4 @@ EXPECTED = [
 
 @pytest.mark.parametrize("record,expected", zip(FIXTURES, EXPECTED))
 def test_fixtures(record, expected):
-    assert list(streams.generateRecords([record])) == [expected]
+    assert list(streams.generate_records([record])) == [expected]

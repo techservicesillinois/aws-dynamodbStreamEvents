@@ -8,7 +8,7 @@ import decimal
 from functools import partial
 import json as _json
 
-from boto3.dynamodb.types import Binary #pylint: disable=import-error
+from boto3.dynamodb.types import Binary
 
 JSONDecoder = _json.JSONDecoder
 JSONDecodeError = _json.JSONDecodeError

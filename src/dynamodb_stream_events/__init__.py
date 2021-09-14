@@ -8,10 +8,14 @@ import os
 import boto3
 
 from . import json
-from .streams import generateRecords #pylint: disable=import-error
+from .streams import generate_records
 
-EVENT_BUS_NAME = os.environ['EVENT_BUS_NAME'] if os.environ.get('EVENT_BUS_NAME') else 'default'
-EVENT_DETAILTYPE_FMT = os.environ['EVENT_DETAILTYPE_FMT'] if os.environ.get('EVENT_DETAILTYPE_FMT') else 'DynamoDB Streams Record {eventName}'
+EVENT_BUS_NAME = os.environ['EVENT_BUS_NAME'] \
+    if os.environ.get('EVENT_BUS_NAME') \
+    else 'default'
+EVENT_DETAILTYPE_FMT = os.environ['EVENT_DETAILTYPE_FMT'] \
+    if os.environ.get('EVENT_DETAILTYPE_FMT') \
+    else 'DynamoDB Streams Record {eventName}'
 LOGGING_LEVEL = getattr(
     logging,
     os.environ['LOGGING_LEVEL'] if os.environ.get('LOGGING_LEVEL') else 'INFO',
@@ -22,6 +26,7 @@ logger = logging.getLogger(__name__)
 events_clnt = boto3.client('events')
 
 def handler(event, context):
+    #pylint: disable=unused-argument
     """
     AWS Lambda handler for DynamoDB Streams.
     """
@@ -40,13 +45,13 @@ def put_records(records, event_bus_name=EVENT_BUS_NAME, _events_clnt=events_clnt
         })
 
         if 'ApproximateCreationDateTime' in record['dynamodb']:
-            ts = record['dynamodb']['ApproximateCreationDateTime']
+            tstamp = record['dynamodb']['ApproximateCreationDateTime']
         else:
-            ts = datetime.now(timezone.utc)
-        record['dynamodb']['ApproximateCreationDateTime'] = ts.timestamp()
+            tstamp = datetime.now(timezone.utc)
+        record['dynamodb']['ApproximateCreationDateTime'] = tstamp.timestamp()
 
         event = dict(
-            Time=ts,
+            Time=tstamp,
             Source='dynamodb-streams.aws.illinois.edu',
             Resources=[],
             DetailType=EVENT_DETAILTYPE_FMT.format(**record),
@@ -62,7 +67,7 @@ def put_records(records, event_bus_name=EVENT_BUS_NAME, _events_clnt=events_clnt
         })
         return event
 
-    events = [_make_event(r_idx, r) for r_idx, r in enumerate(generateRecords(records))]
+    events = [_make_event(r_idx, r) for r_idx, r in enumerate(generate_records(records))]
 
     logger.debug('Puting %(count)d events', {'count': len(events)})
     res = _events_clnt.put_events(Entries=events)
