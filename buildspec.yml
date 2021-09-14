@@ -12,7 +12,8 @@ phases:
     on-failure: ABORT
     commands:
       - 'cd "${CODEBUILD_SRC_DIR}/${PROJECT_SUBDIR}"'
-      - 'make test'
+      - 'make lint-report || :'
+      - 'make test-report'
       - 'make dist'
   post_build:
     on-failure: ABORT
@@ -30,6 +31,17 @@ artifacts:
     - dist/dynamodbStreamEvents.zip
   base-directory: $CODEBUILD_SRC_DIR/$PROJECT_SUBDIR
   discard-paths: yes
+reports:
+  pylint:
+    files:
+      - pylint.xml
+    base-directory: $CODEBUILD_SRC_DIR/$PROJECT_SUBDIR/reports/
+    file-format: JUNITXML
+  pytest:
+    files:
+      - pytest.xml
+    base-directory: $CODEBUILD_SRC_DIR/$PROJECT_SUBDIR/reports/
+    file-format: JUNITXML
 cache:
   paths:
     - $CODEBUILD_SRC_DIR/$PROJECT_SUBDIR/.venv

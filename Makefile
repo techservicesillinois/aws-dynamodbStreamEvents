@@ -1,42 +1,44 @@
 REQUIREMENTS := src/requirements.txt
 TEST_REQUIREMENTS := tests/requirements.txt
-SOURCES := $(wildcard src/./**/*.py)
+SOURCES := $(wildcard src/./*.py src/./**/*.py)
 PYTHON := python3.8
 BUILDDIR := $(PWD)/build/
 DISTDIR := $(PWD)/dist/
+REPORTSDIR := $(PWD)/reports/
 
-.PHONY: clean build lint test dist .venv .deps .src .builddir .distdir
-
-.builddir:
-	mkdir -p "$(BUILDDIR)"
-
-.distdir:
-	mkdir -p "$(DISTDIR)"
-
-.deps: | .venv .builddir
-	.venv/bin/pip install --target "$(BUILDDIR)" -r $(REQUIREMENTS)
-
-.src: | .builddir
-	rsync -R $(SOURCES) "$(BUILDDIR)"
-
-.venv:
-	[ -e "$@" ] || $(PYTHON) -mvenv $@
+.PHONY: clean build lint lint-report test test-report dist .lint-setup .test-setup
 
 clean:
-	rm -fr -- .venv
-	rm -fr -- "$(BUILDDIR)"
-	rm -fr -- "$(DISTDIR)"
+	rm -fr -- .venv || :
+	rm -fr -- "$(BUILDDIR)" || :
+	rm -fr -- "$(DISTDIR)" || :
+	rm -fr -- "$(REPORTSDIR)" || :
 
-build: .deps .src
+build:
+	[ -e .venv ] || $(PYTHON) -mvenv .venv
+	[ -e "$(BUILDDIR)" ] || mkdir -p "$(BUILDDIR)"
+	.venv/bin/pip install -qq --target "$(BUILDDIR)" -r $(REQUIREMENTS)
+	rsync -R $(SOURCES) "$(BUILDDIR)"
 
-lint: build
-	[ -e .venv/bin/pylint ] || .venv/bin/pip install pylint
+.lint-setup: build
+	.venv/bin/pip install -qq -r $(REQUIREMENTS)
+	[ -e .venv/bin/pylint ] || .venv/bin/pip install -qq pylint
+lint: .lint-setup
 	.venv/bin/pylint $(SOURCES)
+lint-report: .lint-setup
+	[ -e "$(REPORTSDIR)" ] || mkdir -p "$(REPORTSDIR)"
+	.venv/bin/pip install -qq pylint_junit
+	.venv/bin/pylint --output-format=pylint_junit.JUnitReporter $(SOURCES) > "$(REPORTSDIR)/pylint.xml"
 
-test: build
-	.venv/bin/pip install -r $(REQUIREMENTS)
-	.venv/bin/pip install -r $(TEST_REQUIREMENTS)
+.test-setup: build
+	.venv/bin/pip install -qq -r $(REQUIREMENTS)
+	.venv/bin/pip install -qq -r $(TEST_REQUIREMENTS)
+test: .test-setup
 	.venv/bin/pytest -v tests/
+test-report: .test-setup
+	[ -e "$(REPORTSDIR)" ] || mkdir -p "$(REPORTSDIR)"
+	.venv/bin/pytest --junitxml="$(REPORTSDIR)/pytest.xml" tests/
 
-dist: build | .distdir
-	cd "$(BUILDDIR)" && zip -r "$(DISTDIR)/dynamodbStreamEvents.zip" *
+dist: build
+	[ -e "$(DISTDIR)" ] || mkdir -p "$(DISTDIR)"
+	cd "$(BUILDDIR)" && zip -yr "$(DISTDIR)/dynamodbStreamEvents.zip" *
