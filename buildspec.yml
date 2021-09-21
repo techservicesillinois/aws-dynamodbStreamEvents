@@ -20,11 +20,18 @@ phases:
     commands:
       - 'cd "${CODEBUILD_SRC_DIR}/${PROJECT_SUBDIR}"'
       - |
-        if [[ -n $PACKAGE_BUCKET && -n $ENVIRONMENT ]]; then
+        if [[ $PACKAGE_COUNT -gt 0 && -n $ENVIRONMENT ]]; then
           PACKAGE_BUILD_HASH=$(find build/ -type f -exec md5sum {} + | LC_ALL=C sort | md5sum | cut -d' ' -f1)
           PACKAGE_KEY="${PACKAGE_PREFIX}dynamodbStreamEvents/${PACKAGE_BUILD_HASH}.zip"
-          aws s3 cp dist/dynamodbStreamEvents.zip s3://${PACKAGE_BUCKET}/${PACKAGE_KEY} --sse aws:kms --sse-kms-key-id ${PACKAGE_KMS_KEY_ID:-alias/aws/s3}
-          aws s3 cp dist/dynamodbStreamEvents.zip s3://${PACKAGE_BUCKET}/${PACKAGE_PREFIX}dynamodbStreamEvents/${ENVIRONMENT}.zip --sse aws:kms --sse-kms-key-id ${PACKAGE_KMS_KEY_ID:-alias/aws/s3}
+
+          for idx in $(seq 0 $PACKAGE_COUNT); do
+            bucket=PACKAGE_${idx}_BUCKET
+            key_id=PACKAGE_${idx}_KMS_KEY_ID
+
+            [[ -n ${!bucket} ]] || continue
+            aws s3 cp dist/dynamodbStreamEvents.zip s3://${!bucket}/${PACKAGE_KEY} --sse aws:kms --sse-kms-key-id ${!key_id:-alias/aws/s3}
+            aws s3 cp dist/dynamodbStreamEvents.zip s3://${!bucket}/${PACKAGE_PREFIX}dynamodbStreamEvents/${ENVIRONMENT}.zip --sse aws:kms --sse-kms-key-id ${!key_id:-alias/aws/s3}
+          done
         fi
 artifacts:
   files:
