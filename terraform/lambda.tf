@@ -2,7 +2,7 @@
 # Data
 # =========================================================
 
-data "aws_s3_bucket_object" "this" {
+data "aws_s3_object" "this" {
     count = var.deploy_s3zip == null ?  0 : 1
 
     bucket = var.deploy_s3zip.bucket
@@ -93,9 +93,9 @@ module "this" {
     create_package         = false
     local_existing_package = var.deploy_s3zip == null ? coalesce(var.deploy_localzip, "${path.module}/../dist/dynamodbStreamEvents.zip") : null
     s3_existing_package    = var.deploy_s3zip == null ? null : {
-        bucket     = data.aws_s3_bucket_object.this[0].bucket
-        key        = data.aws_s3_bucket_object.this[0].key
-        version_id = data.aws_s3_bucket_object.this[0].version_id
+        bucket     = data.aws_s3_object.this[0].bucket
+        key        = data.aws_s3_object.this[0].key
+        version_id = data.aws_s3_object.this[0].version_id
     }
 
     event_source_mapping = {
