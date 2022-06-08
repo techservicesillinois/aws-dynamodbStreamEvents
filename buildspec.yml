@@ -1,6 +1,8 @@
 version: 0.2
 env:
   shell: bash
+  variables:
+    APP_NAME: dynamodbStreamEvents
   exported-variables:
     - PACKAGE_BUILD_HASH
     - PACKAGE_KEY
