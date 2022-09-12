@@ -28,7 +28,7 @@ lint: .lint-setup
 lint-report: .lint-setup
 	[ -e "$(REPORTSDIR)" ] || mkdir -p "$(REPORTSDIR)"
 	.venv/bin/pip install -qq pylint_junit
-	.venv/bin/pylint --output-format=pylint_junit.JUnitReporter $(SOURCES) > "$(REPORTSDIR)/pylint.xml"
+	.venv/bin/pylint --output-format="pylint_junit.JUnitReporter:$(REPORTSDIR)/pylint.xml,text" $(SOURCES)
 
 .test-setup: build
 	.venv/bin/pip install -qq -r $(REQUIREMENTS)
