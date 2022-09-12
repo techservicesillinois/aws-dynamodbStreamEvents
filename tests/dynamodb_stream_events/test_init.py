@@ -4,7 +4,7 @@ import json
 import boto3
 from freezegun import freeze_time
 from moto import mock_events, mock_logs
-from moto.core import ACCOUNT_ID
+from moto.core.models import DEFAULT_ACCOUNT_ID
 import pytest
 
 import dynamodb_stream_events as init
@@ -24,7 +24,7 @@ def setup_events(event_bus_name='default'):
 
         events_clnt.put_rule(
             Name='log-events',
-            EventPattern=f'{{"account":[{ACCOUNT_ID}]}}',
+            EventPattern=f'{{"account":[{DEFAULT_ACCOUNT_ID }]}}',
             State='ENABLED',
             EventBusName=event_bus_name,
         )
@@ -32,7 +32,7 @@ def setup_events(event_bus_name='default'):
             Rule='log-events',
             EventBusName=event_bus_name,
             Targets=[
-                dict(Id="logs", Arn=f"arn:aws:logs:us-east-2:{ACCOUNT_ID}:log-group:/events"),
+                dict(Id="logs", Arn=f"arn:aws:logs:us-east-2:{DEFAULT_ACCOUNT_ID }:log-group:/events"),
             ],
         )
 
