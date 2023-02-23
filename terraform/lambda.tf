@@ -23,11 +23,11 @@ data "aws_iam_policy_document" "this" {
             "dynamodb:GetRecords",
             "dynamodb:GetShardIterator",
         ]
-        resources = [ local.dynamodb_stream_arn ]
+        resources = [ var.dynamodb_table.stream_arn ]
     }
 
     dynamic "statement" {
-        for_each = [ for c in data.aws_dynamodb_table.this.server_side_encryption : c.kms_key_arn if c.kms_key_arn != null ]
+        for_each = var.dynamodb_table.kms_key_arn == null ? [] : [ var.dynamodb_table.kms_key_arn ]
         content {
             effect  = "Allow"
             actions = [
@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "this" {
                 test     = "StringEquals"
                 variable = "kms:EncryptionContext:aws:dynamodb:tableName"
 
-                values = [ var.dynamodb_table ]
+                values = [ var.dynamodb_table.name ]
             }
 
             condition {
@@ -100,7 +100,7 @@ module "this" {
 
     event_source_mapping = {
         dynamodb = {
-            event_source_arn  = local.dynamodb_stream_arn
+            event_source_arn  = var.dynamodb_table.stream_arn
             starting_position = "LATEST"
         }
     }
@@ -113,7 +113,7 @@ module "this" {
     allowed_triggers = {
         dynamodb = {
             principal  = "dynamodb.amazonaws.com"
-            source_arn = local.dynamodb_stream_arn
+            source_arn = var.dynamodb_table.stream_arn
         }
     }
 

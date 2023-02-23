@@ -43,8 +43,13 @@ variable "deploy_s3zip" {
 }
 
 variable "dynamodb_table" {
-    type        = string
-    description = "Name of the DynamoDB table to monitor. Streams must be enabled."
+    type        = object({
+                    arn         = string
+                    name        = string
+                    stream_arn  = string
+                    kms_key_arn = string
+                })
+    description = "DynamoDB table to monitor. Streams must be enabled."
 }
 
 variable "event_detailtype_fmt" {
