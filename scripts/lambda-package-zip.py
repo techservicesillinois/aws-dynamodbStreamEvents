@@ -6,7 +6,7 @@ than the version in S3, and should be uploaded:
 
 - Libraries and executables are hashed after being stripped of their symbols.
   This ensures that compiler metadata doesn't needlessly change the hash.
-- *.pyc, *.pyi, and *.o files are skipped in the hash.
+- *.pyc, *.pyi, *.o files are skipped in the hash.
 - Makefile files are skipped in the hash.
 - __pycache__ and *.dist-info directories and their contents are skipped in the
   hash.
@@ -68,6 +68,11 @@ LIBRARY_MIMETYPES = [
 SKIP_FILE_EXTS = {'.pyc', '.pyi', '.o'}
 SKIP_FILE_NAMES = {
     'Makefile',
+}
+SKIP_DIRS = {
+    'bin',
+    'python/bin',
+    'node_modules/.bin',
 }
 
 def _tmpdir():
@@ -393,6 +398,11 @@ def get_package_hash(package_path):
                 continue
             if _dir == '__pycache__':
                 continue
+
+            _dir_rel = path.relpath(path.join(root, _dir), package_path)
+            if _dir_rel in SKIP_DIRS:
+                continue
+
             _dirs.append(_dir)
         dirs[:] = _dirs
 
