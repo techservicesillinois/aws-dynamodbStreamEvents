@@ -1,3 +1,4 @@
+APP_NAME := dynamodbStreamEvents
 REQUIREMENTS := src/requirements.txt
 TEST_REQUIREMENTS := tests/requirements.txt
 SOURCES := $(wildcard src/./*.py src/./**/*.py)
@@ -6,7 +7,7 @@ BUILDDIR := $(PWD)/build/
 DISTDIR := $(PWD)/dist/
 REPORTSDIR := $(PWD)/reports/
 
-.PHONY: clean build lint lint-report test test-report dist .lint-setup .test-setup
+.PHONY: clean build lint lint-report test test-report dist package .lint-setup .test-setup
 
 clean:
 	rm -fr -- .venv || :
@@ -41,4 +42,10 @@ test-report: .test-setup
 
 dist: build
 	[ -e "$(DISTDIR)" ] || mkdir -p "$(DISTDIR)"
-	cd "$(BUILDDIR)" && zip -yr "$(DISTDIR)/dynamodbStreamEvents.zip" *
+	cd "$(BUILDDIR)" && zip -yr "$(DISTDIR)/$(APP_NAME).zip" *
+
+package:
+	[ -e .venv ] || $(PYTHON) -mvenv .venv
+	.venv/bin/pip install -qq -r scripts/requirements.txt
+	[ -e "$(DISTDIR)" ] || mkdir -p "$(DISTDIR)"
+	.venv/bin/python scripts/lambda-package-zip.py -a "$(APP_NAME)" -o "$(DISTDIR)/$(APP_NAME).zip" build/

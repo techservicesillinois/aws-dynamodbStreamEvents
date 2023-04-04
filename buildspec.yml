@@ -3,9 +3,6 @@ env:
   shell: bash
   variables:
     APP_NAME: dynamodbStreamEvents
-  exported-variables:
-    - PACKAGE_BUILD_HASH
-    - PACKAGE_KEY
 phases:
   install:
     runtime-versions:
@@ -16,37 +13,19 @@ phases:
       - 'cd "${CODEBUILD_SRC_DIR}/${PROJECT_SUBDIR}"'
       - 'make lint-report || :'
       - 'make test-report'
-      - 'make dist'
+      - 'make build'
   post_build:
     on-failure: ABORT
     commands:
       - 'cd "${CODEBUILD_SRC_DIR}/${PROJECT_SUBDIR}"'
       - |
-        if [[ $PACKAGE_COUNT -gt 0 && -n $ENVIRONMENT ]]; then
-          PACKAGE_BUILD_HASH=$(find build/ -type f -exec md5sum {} + | LC_ALL=C sort | md5sum | cut -d' ' -f1)
-          PACKAGE_KEY="${PACKAGE_PREFIX}${APP_NAME}/${PACKAGE_BUILD_HASH}.zip"
-
-          orig_region=$AWS_REGION
-          for idx in $(seq 0 $PACKAGE_COUNT); do
-            bucket=PACKAGE_${idx}_BUCKET
-            region=PACKAGE_${idx}_REGION
-            key_id=PACKAGE_${idx}_KMS_KEY_ID
-
-            [[ -n ${!bucket} ]] || continue
-            if [[ -n ${!region} ]]; then
-              export AWS_REGION=${!region}
-            else
-              export AWS_REGION=$orig_region
-            fi
-            aws s3 cp dist/${APP_NAME}.zip s3://${!bucket}/${PACKAGE_KEY} --sse aws:kms --sse-kms-key-id ${!key_id:-alias/aws/s3}
-            aws s3 cp dist/${APP_NAME}.zip s3://${!bucket}/${PACKAGE_PREFIX}${APP_NAME}/${ENVIRONMENT}.zip --sse aws:kms --sse-kms-key-id ${!key_id:-alias/aws/s3}
-          done
-          export AWS_REGION=$orig_region
+        if [[ -n $PACKAGE_BUCKET || $PACKAGE_COUNT -gt 0 ]]; then
+          make package
         fi
-artifacts:
+rtifacts:
   files:
-    - dist/dynamodbStreamEvents.zip
-  base-directory: $CODEBUILD_SRC_DIR/$PROJECT_SUBDIR
+    - $APP_NAME.zip
+  base-directory: $CODEBUILD_SRC_DIR/$PROJECT_SUBDIR/dist/
   discard-paths: yes
 reports:
   pylint:
