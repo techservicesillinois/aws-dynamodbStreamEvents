@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "this" {
 
 module "this" {
     source = "terraform-aws-modules/lambda/aws"
-    version = "3.1.0"
+    version = "4.16.0"
 
     function_name = "${local.name_prefix}dynamodbStreamEvents"
     description   = "Send DynamoDB Stream Records to EventBridge"
