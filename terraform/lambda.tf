@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "this" {
         effect    = "Allow"
         actions   = [ "events:PutEvents" ]
         resources = [
-            "arn:aws:events:${local.region_name}:${local.account_id}:event-bus/${var.event_bus_name}"
+            "arn:${local.partition}:events:${local.region_name}:${local.account_id}:event-bus/${var.event_bus_name}"
         ]
         condition {
             test     = "StringEquals"
