@@ -64,6 +64,12 @@ variable "event_bus_name" {
     default     = "default"
 }
 
+variable "function_tags" {
+    type        = map(string)
+    description = "Extra tags to add to the Lambda function only."
+    default     = {}
+}
+
 variable "cloudwatch_logs_kms_key_id" {
     type        = string
     description = "The ARN of the KMS Key to use when encrypting log data."

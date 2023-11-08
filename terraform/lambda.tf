@@ -74,13 +74,14 @@ data "aws_iam_policy_document" "this" {
 
 module "this" {
     source = "terraform-aws-modules/lambda/aws"
-    version = "6.0.1"
+    version = "6.4.0"
 
     function_name = "${local.name_prefix}dynamodbStreamEvents"
     description   = "Send DynamoDB Stream Records to EventBridge"
     handler       = "dynamodb_stream_events.handler"
     runtime       = "python3.8"
     timeout       = 10
+    function_tags = var.function_tags
 
     environment_variables = {
         EVENT_BUS_NAME       = var.event_bus_name
