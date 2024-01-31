@@ -1,5 +1,5 @@
 boto3
 freezegun
-moto[events,logs]
+moto[events,logs]<5
 pytest
 pytz
