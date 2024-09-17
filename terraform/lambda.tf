@@ -79,7 +79,7 @@ module "this" {
     function_name = "${local.name_prefix}dynamodbStreamEvents"
     description   = "Send DynamoDB Stream Records to EventBridge"
     handler       = "dynamodb_stream_events.handler"
-    runtime       = "python3.8"
+    runtime       = "python3.11"
     timeout       = 10
     function_tags = var.function_tags
 
