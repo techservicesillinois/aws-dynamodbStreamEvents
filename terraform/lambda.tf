@@ -86,10 +86,12 @@ module "this" {
     environment_variables = {
         EVENT_BUS_NAME       = var.event_bus_name
         EVENT_DETAILTYPE_FMT = var.event_detailtype_fmt
-        LOGGING_LEVEL        = local.is_debug ? "DEBUG" : "INFO"
+        LOGGING_LEVEL        = local.partition == "aws" || local.is_debug ? "DEBUG" : "INFO"
     }
     cloudwatch_logs_kms_key_id        = var.cloudwatch_logs_kms_key_id
     cloudwatch_logs_retention_in_days = local.is_debug ? 7 : 30
+    logging_log_format                = "JSON"
+    logging_application_log_level     = local.is_debug ? "DEBUG" : "INFO"
 
     create_package         = false
     local_existing_package = var.deploy_s3zip == null ? coalesce(var.deploy_localzip, "${path.module}/../dist/dynamodbStreamEvents.zip") : null
